@@ -10,7 +10,7 @@ def DataPipeline(df: pd.DataFrame, args: ArgumentParser):
     # Check informations about data
     if args.data_informations:
         data_informations(df=df)
-        print("Data informations ready!")
+        print("Data informations ops finished!")
     # Seperate data
     df_fraud = df[df["Class"] == 1]
     df_normal = df[df["Class"] == 0]
