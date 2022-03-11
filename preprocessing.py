@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from os import remove
 
+from sklearn.preprocessing import StandardScaler
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -22,6 +23,11 @@ def DataPipeline(df: pd.DataFrame, args: ArgumentParser):
     print("Remove outliers ops finished!")
     df = pd.concat([df_fraud, df_normal])
     df.sort_values("Time")
+
+    # Since most of data has already been scaled. Scale the columns that are left to scale (Amount and Time)
+    df["Amount"] = StandardScaler().fit_transform(df["Amount"].values.reshape(-1, 1))
+    df["Time"] = StandardScaler().fit_transform(df["Time"].values.reshape(-1, 1))
+    print("Standart Scalar ops finished!")
     # Return the dataframe formed after the operations done
     return df
 

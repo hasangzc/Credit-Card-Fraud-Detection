@@ -2,6 +2,7 @@ import warnings
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import NoReturn
+from click import style
 
 import xlsxwriter
 from pathlib import Path
@@ -20,6 +21,7 @@ from train import declareParserArguments
 # https://www.kaggle.com/vincentlugat/lightgbm-plotly
 # https://www.kaggle.com/currie32/predicting-fraud-with-tensorflow/notebook
 # https://www.kaggle.com/enkidoctordu/eda-and-machine-learning-prediction-of-credit-card
+# https://www.kaggle.com/ohseokkim/creditcard-fraud-balance-is-key-feat-pycaret
 
 
 def target_distribution(df: pd.DataFrame):
@@ -40,7 +42,7 @@ def target_distribution(df: pd.DataFrame):
     )
 
 
-def feature_distribution(df: pd.DataFrame, column_name: str):
+def feature_distribution(df: pd.DataFrame, column_name: str, ops="before"):
     # Create figure
     figsize = (15, 8)
     sns.set_style("ticks")
@@ -52,8 +54,33 @@ def feature_distribution(df: pd.DataFrame, column_name: str):
     s.set_axis_labels(column_name, "proportion")
     s.fig.suptitle(column_name)
     # Save resulting plot
+    if ops == "before":
+        plt.savefig(
+            f"./visualization_results/About_Data/{column_name}_distribution.png",
+            bbox_inches="tight",
+        )
+    if ops == "after":
+        plt.savefig(
+            f"./visualization_results/About_Data/{column_name}_distribution_after_ops.png",
+            bbox_inches="tight",
+        )
+
+
+def check_dtypes(df: pd.DataFrame):
+    # Create a figure
+    plt.figure(figsize=(6, 6))
+    # Count data types in dataframe and plot as barplot
+    ax = df.dtypes.value_counts().plot(
+        kind="bar", grid=False, fontsize=10, color="grey"
+    )
+    """for p in ax.patches:
+        height = p.get_height()
+        ax.text(
+            p.get_x() + p.get_width() / 2.0, height + 0.2, height, ha="center", size=25
+        )"""
+    # Save resulting plot
     plt.savefig(
-        f"./visualization_results/About_Data/{column_name}_distribution.png",
+        f"./visualization_results/About_Data/datatypes.png",
         bbox_inches="tight",
     )
 
@@ -127,9 +154,11 @@ def box_plots(df: pd.DataFrame):
 
 
 def missing_plot(df: pd.DataFrame, column_name: str):
+    # Determine null values in the features
     null_feat = pd.DataFrame(
         len(df[column_name]) - df.isnull().sum(), columns=["Count"]
     )
+    # Determine percantege of null
     percentage_null = (
         pd.DataFrame(
             (len(df[column_name]) - (len(df[column_name]) - df.isnull().sum()))
@@ -139,6 +168,7 @@ def missing_plot(df: pd.DataFrame, column_name: str):
         )
     ).round(2)
 
+    # Plot it with Plotly lib
     trace = go.Bar(
         x=null_feat.index,
         y=null_feat["Count"],
@@ -147,31 +177,62 @@ def missing_plot(df: pd.DataFrame, column_name: str):
         textposition="auto",
         marker=dict(color="#7EC0EE", line=dict(color="#000000", width=1.5)),
     )
-
+    # Set plot properties
     layout = dict(title="Missing Values (count & %)")
     fig = go.Figure(dict(data=[trace], layout=layout))
     iplot(fig, filename="Missing Values")
+    # Save resulting plot as html
     fig.write_html("./visualization_results/About_Data/missing_values.html")
 
 
-def pca_columns_outliers(df: pd.DataFrame):
-    plt.style.use("ggplot")
-    f, ax = plt.subplots(figsize=(11, 15))
+def correlation_features_target(df: pd.DataFrame, ops="before"):
+    # Create a figure
+    plt.figure(figsize=(10, 4), dpi=100)
+    # Calculate correlation between features and target
+    corr = pd.DataFrame(df.corr().sort_values("Class", ascending=True)["Class"])
+    # Plot it
+    sns.barplot(x=corr.index, y=corr.values.flatten(), palette="Blues")
+    # Set plot properties
+    plt.title("Correleation between features and class")
+    plt.xlabel("Features")
+    plt.ylabel("Correlation")
+    # Prevent axis labels from overlapping
+    plt.tight_layout()
+    # Save resulting plot
+    if ops == "before":
+        plt.savefig(
+            f"./visualization_results/About_Data/corr_between_target_and_features.png",
+            bbox_inches="tight",
+        )
+    if ops == "after":
+        plt.savefig(
+            f"./visualization_results/About_Data/corr_between_target_and_features_after_ops.png",
+            bbox_inches="tight",
+        )
 
+
+def pca_columns_outliers(df: pd.DataFrame):
+    # Set plot style
+    plt.style.use("ggplot")
+    # Create subplots
+    f, ax = plt.subplots(figsize=(11, 15))
+    # Set plot properties
     ax.set_facecolor("#fafafa")
     ax.set(xlim=(-5, 5))
     plt.ylabel("Variables")
     plt.title("Outliers Pca columns")
+    # Plot it
     ax = sns.boxplot(
         data=df.drop(columns=["Amount", "Class", "Time"]), orient="h", palette="Set2"
     )
+    # Save resulting plot
     plt.savefig(
         f"./visualization_results/About_Data/pca_columns_outliers.png",
         bbox_inches="tight",
     )
 
 
-def box_plot_after_rmv_outliers(df: pd.DataFrame):
+def box_plot_after_rmv_outliers(df: pd.DataFrame, ops="before"):
     cprint("Boxplots", "green", "on_red", attrs=["bold"])
     index = 0
     plt.figure(figsize=(20, 20))
@@ -181,7 +242,6 @@ def box_plot_after_rmv_outliers(df: pd.DataFrame):
         sns.boxplot(y=feature, x="Class", data=df, whis=3)
     # Prevent axis labels from overlapping
     plt.tight_layout()
-    # Save resulting plot
     # Save resulting plot
     plt.savefig(
         f"./visualization_results/About_Data/box_plots_after_ops.png",
@@ -200,6 +260,8 @@ def visualize_before_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn
     target_distribution(df=df)
     # Plot feature distribution
     feature_distribution(df=df, column_name="Time")
+    # Check datatypes in dataframe
+    check_dtypes(df=df)
     # Plot time-target distribution
     time_target_dist(df=df)
     # Plot amount-target distribution
@@ -212,6 +274,8 @@ def visualize_before_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn
     missing_plot(df=df, column_name="Class")
     # Plot pca column and examine outliers
     pca_columns_outliers(df=df)
+    # Plot correlations between features and taget(class feature)
+    correlation_features_target(df=df)
 
 
 def visualize_after_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
@@ -221,13 +285,20 @@ def visualize_after_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
     Returns:
         NoReturn: This method does not return anything."""
 
+    # Create a folder for dataframe after the ops
     Path(f"./visualization_results/data_after_ops/").mkdir(parents=True, exist_ok=True)
+    # Save dataframe in Excel format
     df.to_excel(
         f"./visualization_results/data_after_ops/data.xlsx",
         engine="xlsxwriter",
         index=False,
     )
+    # Plot box plots after pipeline ops
     box_plot_after_rmv_outliers(df=df)
+    # Plot correlations between features and taget(class feature)
+    correlation_features_target(df=df, ops="after")
+    # Feature distribution after ops
+    feature_distribution(df=df, column_name="Amount", ops="after")
 
 
 if __name__ == "__main__":
