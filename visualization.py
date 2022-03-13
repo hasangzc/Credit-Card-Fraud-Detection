@@ -278,7 +278,7 @@ def visualize_before_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn
     correlation_features_target(df=df)
 
 
-def visualize_after_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
+def visualize_after_pre_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
     """With this function, data after operations is visualized with different methods.
     Args:
         df (pd.DataFrame): The given dataframe.
@@ -311,8 +311,8 @@ if __name__ == "__main__":
     # py.init_notebook_mode(connected=True)
     # data before data ops
     df_before_ops = pd.read_csv(f"./data/{args.data}.csv")
-    # data after data ops
+    # data after pre data ops
     df_after_ops = DataPipeline(df=pd.read_csv(f"./data/{args.data}.csv"), args=args)
     # visualize
     visualize_before_data_ops(df=df_before_ops)
-    visualize_after_data_ops(df=df_after_ops)
+    visualize_after_pre_data_ops(df=df_after_ops)

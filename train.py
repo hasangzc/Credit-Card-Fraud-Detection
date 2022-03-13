@@ -1,5 +1,5 @@
 from argparse import ArgumentParser
-
+from model.logisticregression import LogisticRegressionTrainer
 import pandas as pd
 
 from preprocessing import DataPipeline
@@ -21,6 +21,13 @@ def declareParserArguments(parser: ArgumentParser) -> ArgumentParser:
         help="Information about dataset.",
     )
 
+    parser.add_argument(
+        "--is_testing",
+        action="store_true",
+        default=False,
+        help="Whether to test the trained model",
+    )
+
     return parser.parse_args()
 
 
@@ -28,4 +35,9 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="Fraud Detection")
     # Add arguments
     args = declareParserArguments(parser=parser)
-    DataPipeline(pd.read_csv(f"./data/{args.data}.csv"), args=args)
+    # Test data and fetch metric results
+    args.is_testing = True
+    # Create an LogisticRegressionTrainer Object
+    logistic_reg_trainer = LogisticRegressionTrainer(args=args)
+    # Train LogisticRegression model
+    logistic_reg_trainer.pipeline()
