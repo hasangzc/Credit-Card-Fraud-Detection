@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 from imblearn.over_sampling import SMOTE
 from preprocessing import DataPipeline
-from sklearn.linear_model import LlogisticRegression
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
     confusion_matrix,
