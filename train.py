@@ -1,8 +1,6 @@
 from argparse import ArgumentParser
-from model.logisticregression import LogisticRegressionTrainer
-import pandas as pd
 
-from preprocessing import DataPipeline
+from model.logisticregression import LogisticRegressionTrainer
 
 
 def declareParserArguments(parser: ArgumentParser) -> ArgumentParser:
@@ -26,6 +24,13 @@ def declareParserArguments(parser: ArgumentParser) -> ArgumentParser:
         action="store_true",
         default=False,
         help="Whether to test the trained model",
+    )
+
+    parser.add_argument(
+        "--visualize_log_results",
+        action="store_true",
+        default=False,
+        help="Whether to visualize the test results",
     )
 
     return parser.parse_args()

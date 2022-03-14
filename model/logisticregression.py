@@ -1,3 +1,4 @@
+from json import load
 import warnings
 from argparse import ArgumentParser
 from pathlib import Path
@@ -29,8 +30,10 @@ class LogisticRegressionTrainer:
 
     def __init__(self, args: ArgumentParser) -> NoReturn:
         """Init method.
+
         Args:
             args (ArgumentParser): The arguments of the training and testing session.
+
         Returns:
             NoReturn: This method does not return anything.
         """
@@ -53,16 +56,18 @@ class LogisticRegressionTrainer:
             self._smote_y,
             test_size=0.3,
             random_state=0,
-            stratify=self._y_target,
+            stratify=self._smote_y,
         )
 
     def _grid_search_then_train(
         self, x_train: pd.DataFrame, y_train: pd.DataFrame
     ) -> LogisticRegression:
         """This function searches for the best estimator.
+
         Args:
             X_train (pd.DataFrame): The training data.
             y_train (pd.DataFrame): The testing data.
+
         Returns:
             LogisticRegression: The best estimator.
         """
@@ -77,8 +82,8 @@ class LogisticRegressionTrainer:
         # Declare the GridSearchCv object
         clf = GridSearchCV(logreg, param_grid=parameters, scoring="accuracy", cv=10)
         # Fit the object
-        clf.fit(x=x_train, y=y_train)
-        return clf.best_params_
+        clf.fit(x_train, y_train)
+        return clf.best_estimator_
 
     def _train(self) -> NoReturn:
         """This function train an LogisticRegression model.
@@ -87,7 +92,7 @@ class LogisticRegressionTrainer:
             NoReturn: This function does not return anything.
         """
         # Declare a saving path
-        self.model_path = f"/.saved_models/LogisticRegModel/"
+        self.model_path = f"./saved_models/LogisticRegModel/"
         # Create the saving path if does it not exist
         Path(self.model_path).mkdir(parents=True, exist_ok=True)
         # Search for best parameters
@@ -102,6 +107,7 @@ class LogisticRegressionTrainer:
 
     def _test(self) -> NoReturn:
         """This function tests the test data using the last trained model in train.py procedure.
+
         Returns:
             NoReturn: This function does not return anything.
         """
@@ -116,12 +122,12 @@ class LogisticRegressionTrainer:
         f1 = f1_score(self._y_test, predictions)
         # Print metrics results
         print(
-            f"Test Data Results: confusion_matrix: {matrix}, accuracy_score:{accuracy_score}"
+            f"Test Data Results: confusion_matrix: {matrix}, accuracy_score:{accuracy}"
         )
         print("\n")
-        print(f"recall_score:{recall}, roc_auc_score:{roc_auc_score}")
+        print(f"recall_score:{recall}, roc_auc_score:{roc_auc}")
         print("\n")
-        print(f"precision_score={precision_score}, f1_score:{f1_score}")
+        print(f"precision_score={precision}, f1_score:{f1}")
 
     def pipeline(self) -> NoReturn:
         # Train the model
@@ -129,3 +135,52 @@ class LogisticRegressionTrainer:
         if self._args.is_testing:
             # Test the model
             self._test()
+
+
+# After training check test results and plot them!
+# Production
+class LogisticRegressionProd:
+    """
+    This class loads a trained model and supplies prediction method for the production.
+    """
+
+    def __init__(self, args: ArgumentParser) -> NoReturn:
+        """Init method.
+
+        Args:
+            args (ArgumentParser): The arguments of the production.
+
+        Returns:
+            NoReturn: This method does not return anything.
+        """
+        # Create the args object
+        self._args = args
+        # Declare a model path to load
+        self.model_path = f"./saved_models/LogisticRegModel/logisticregressin_model.pkl"
+        # Load the model
+        self._bst = self._load_model()
+
+    def test(self, df: pd.DataFrame) -> pd.DataFrame:
+        """This function tests the production data using the given trained model
+
+        Returns:
+            ndarray: The predicted values
+        """
+        # Process the dataframe
+        df = DataPipeline(df=df, args=self._args)
+        # If the predictions are the visualization
+        if self._args.visualize_log_results:
+            # Copy the data as it is to be returned
+            df_vis = df.copy()
+            return (self._bst.predict(X=df.loc[:, df.columns != "Class"]), df_vis)
+        # Otherwise, return the prediction only
+        return self._bst.predict()
+
+    def _load_model(self) -> LogisticRegression:
+        """This method loads an LogisticRegression model from the given path.
+
+        Returns:
+            LogisticRegression: The loaded version of Logistic Regression.
+        """
+        # Load the model, then return
+        return load(open(f"{self.model_path}", "rb"))

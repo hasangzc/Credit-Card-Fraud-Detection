@@ -4,8 +4,6 @@ from os import remove
 from sklearn.preprocessing import StandardScaler
 import numpy as np
 import pandas as pd
-from scipy import stats
-from model.logisticregression import LogisticRegression
 
 
 def DataPipeline(df: pd.DataFrame, args: ArgumentParser):
@@ -110,8 +108,3 @@ def data_informations(df: pd.DataFrame):
         f"No Frauds', {df['Class'].value_counts()[0]/len(df) * 100}, % of the dataset"
     )
     print(f"Frauds', {df['Class'].value_counts()[1]/len(df) * 100}, % of the dataset")
-    # Print target information after smote
-    model_df = LogisticRegression()
-    print(
-        f"Train target value counts: {model_df._y_train.shape()}, Test target value counts: {model_df._y_test.shape()} "
-    )

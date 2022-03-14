@@ -1,0 +1,9 @@
+Test Data Results: 
+confusion_matrix: [[65970  1187]
+ 		  [ 2918 64238]], 
+
+accuracy_score:0.9694370611928853
+recall_score:0.9565489308475787,
+roc_auc_score:0.9694369652376584
+precision_score=0.9818570882690103, 
+f1_score:0.9690377957625904

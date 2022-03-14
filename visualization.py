@@ -2,17 +2,17 @@ import warnings
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import NoReturn
-from click import style
 
-import xlsxwriter
-from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 import plotly.graph_objs as go
 import seaborn as sns
+import xlsxwriter
+from click import style
 from plotly.offline import iplot
 from termcolor import cprint
 
+from model.logisticregression import LogisticRegressionTrainer
 from preprocessing import DataPipeline
 from train import declareParserArguments
 
@@ -24,7 +24,7 @@ from train import declareParserArguments
 # https://www.kaggle.com/ohseokkim/creditcard-fraud-balance-is-key-feat-pycaret
 
 
-def target_distribution(df: pd.DataFrame):
+def target_distribution(df: pd.DataFrame, ops="Before_Smote"):
     # Make direction for result plot and dataframe
     Path(f"./visualization_results/About_Data/").mkdir(parents=True, exist_ok=True)
     # Create a figure
@@ -36,10 +36,16 @@ def target_distribution(df: pd.DataFrame):
     plt.xlabel("Is Fraud?", fontsize=15)
     plt.ylabel("Count", fontsize=15)
     # Save the resulting plot
-    plt.savefig(
-        f"./visualization_results/About_Data/target_distribution.png",
-        bbox_inches="tight",
-    )
+    if ops == "Before_Smote":
+        plt.savefig(
+            f"./visualization_results/About_Data/target_distribution.png",
+            bbox_inches="tight",
+        )
+    if ops == "After_Smote":
+        plt.savefig(
+            f"./visualization_results/About_Data/target_distribution_after_smote.png",
+            bbox_inches="tight",
+        )
 
 
 def feature_distribution(df: pd.DataFrame, column_name: str, ops="before"):
@@ -73,11 +79,6 @@ def check_dtypes(df: pd.DataFrame):
     ax = df.dtypes.value_counts().plot(
         kind="bar", grid=False, fontsize=10, color="grey"
     )
-    """for p in ax.patches:
-        height = p.get_height()
-        ax.text(
-            p.get_x() + p.get_width() / 2.0, height + 0.2, height, ha="center", size=25
-        )"""
     # Save resulting plot
     plt.savefig(
         f"./visualization_results/About_Data/datatypes.png",
@@ -301,6 +302,16 @@ def visualize_after_pre_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoRet
     feature_distribution(df=df, column_name="Amount", ops="after")
 
 
+def visualize_test_results(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
+    """With this function, visualize test results and data using the trained model
+    Args:
+        df (pd.DataFrame): The given dataframe.
+    Returns:
+        NoReturn: This method does not return anything.
+    """
+    pass
+
+
 if __name__ == "__main__":
     parser = ArgumentParser(description="visualizations")
     args = declareParserArguments(parser=parser)
@@ -313,6 +324,20 @@ if __name__ == "__main__":
     df_before_ops = pd.read_csv(f"./data/{args.data}.csv")
     # data after pre data ops
     df_after_ops = DataPipeline(df=pd.read_csv(f"./data/{args.data}.csv"), args=args)
-    # visualize
+
+    # Create an LogisticRegressionTrainer
+    logistic_reg_trainer = LogisticRegressionTrainer(args=args)
+    # Add features df after smote ops
+    df_smote = logistic_reg_trainer._smote_x
+    # Add target values as a column after smote ops
+    df_smote["Class"] = logistic_reg_trainer._smote_y
+    # Visualize target distribution after smote ops
+    target_distribution(df=df_smote, ops="After_Smote")
+
+    # Visualize unmodified dataset
     visualize_before_data_ops(df=df_before_ops)
+
+    # Visualize data undergoing predata changes
     visualize_after_pre_data_ops(df=df_after_ops)
+
+    # Visualize test results based on Logistic Regression model
