@@ -268,6 +268,33 @@ def plot_confussion_matrix(df: pd.DataFrame, actual_column, predict_column):
     )
 
 
+def plot_feature_importance():
+    # Create an LogisticRegressionProd object
+    log_reg_prod = LogisticRegressionProd(args=args)
+    # Get saved model
+    model = log_reg_prod._bst
+    # Get columns orginal dataframe
+    df_original = pd.read_csv(f"./data/{args.data}.csv")
+    df_original = df_original.loc[:, df_original.columns != "Class"]
+    # Detect coefficient
+    importance = model.coef_[0]
+    # Add columns and importance in dataframe
+    feature_names = df_original.columns
+    feature_importance = pd.DataFrame(feature_names, columns=["feature"])
+    feature_importance["importance"] = importance
+    # Sort values by importance column
+    feature_importance = feature_importance.sort_values(
+        by=["importance"], ascending=False
+    )
+    # Plot
+    ax = feature_importance.plot.barh(x="feature", y="importance")
+    # Save resulting plot
+    plt.savefig(
+        f"./visualization_results/Prediction_Results/feature_importance.png",
+        bbox_inches="tight",
+    )
+
+
 def visualize_before_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
     """With this function, data before operations is visualized with different methods.
     Args:
@@ -339,11 +366,15 @@ def visualize_test_results(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
         index=False,
     )
 
+    # Plot confussion matrix
     plot_confussion_matrix(
         df=df,
         actual_column="Class",
         predict_column="Predictions",
     )
+
+    # Plot feature importance
+    plot_feature_importance()
 
 
 if __name__ == "__main__":
@@ -369,10 +400,10 @@ if __name__ == "__main__":
     target_distribution(df=df_smote, ops="After_Smote")
 
     # Visualize unmodified dataset
-    # visualize_before_data_ops(df=df_before_ops)
+    visualize_before_data_ops(df=df_before_ops)
 
     # Visualize data undergoing predata changes
-    # visualize_after_pre_data_ops(df=df_after_ops)
+    visualize_after_pre_data_ops(df=df_after_ops)
 
     args.visualize_log_results = True
     # Create an LogisticRegressionProd object
