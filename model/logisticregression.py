@@ -1,8 +1,7 @@
-from json import load
 import warnings
 from argparse import ArgumentParser
 from pathlib import Path
-from pickle import dump
+from pickle import dump, load
 from typing import NoReturn
 
 import numpy as np

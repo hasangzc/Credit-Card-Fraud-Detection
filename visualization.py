@@ -1,18 +1,21 @@
+import itertools
 import warnings
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import NoReturn
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
 import seaborn as sns
 import xlsxwriter
 from click import style
 from plotly.offline import iplot
+from sklearn.metrics import confusion_matrix
 from termcolor import cprint
 
-from model.logisticregression import LogisticRegressionTrainer
+from model.logisticregression import LogisticRegressionProd, LogisticRegressionTrainer
 from preprocessing import DataPipeline
 from train import declareParserArguments
 
@@ -250,6 +253,21 @@ def box_plot_after_rmv_outliers(df: pd.DataFrame, ops="before"):
     )
 
 
+def plot_confussion_matrix(df: pd.DataFrame, actual_column, predict_column):
+    # Calculate confussion matrix for predictions and actual values
+    matrix = confusion_matrix(df[actual_column], df[predict_column])
+    # Create a figure
+    plt.figure(figsize=(8, 6))
+    # Plot confussion matrix
+    ax = sns.heatmap(matrix, cmap="YlGnBu", annot=True, fmt="d")
+    ax.set_title("Confusion Matrix")
+    # Save resulting plot
+    plt.savefig(
+        f"./visualization_results/Prediction_Result_Plots/confussion_matrix.png",
+        bbox_inches="tight",
+    )
+
+
 def visualize_before_data_ops(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
     """With this function, data before operations is visualized with different methods.
     Args:
@@ -309,7 +327,15 @@ def visualize_test_results(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
     Returns:
         NoReturn: This method does not return anything.
     """
-    pass
+    # Make direction for result plot and dataframe
+    Path(f"./visualization_results/Prediction_Result_Plots/").mkdir(
+        parents=True, exist_ok=True
+    )
+    plot_confussion_matrix(
+        df=df,
+        actual_column="Class",
+        predict_column="Predictions",
+    )
 
 
 if __name__ == "__main__":
@@ -340,4 +366,15 @@ if __name__ == "__main__":
     # Visualize data undergoing predata changes
     visualize_after_pre_data_ops(df=df_after_ops)
 
+    args.visualize_log_results = True
+    # Create an LogisticRegressionProd object
+    log_reg_prod = LogisticRegressionProd(args=args)
+    # Get predictions and dataframe
+    predictions, df_test = log_reg_prod.test(df=df_before_ops)
+    # Add Predict results as a column
+    df_test["Predictions"] = predictions
+
+    # Delete not needed values
+    del predictions
     # Visualize test results based on Logistic Regression model
+    visualize_test_results(df=df_test, args=args)
