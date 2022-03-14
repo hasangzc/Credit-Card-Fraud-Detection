@@ -1,3 +1,4 @@
+# Import the modules
 from argparse import ArgumentParser
 
 from model.logisticregression import LogisticRegressionTrainer

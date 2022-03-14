@@ -1,3 +1,4 @@
+# Import the modules
 import itertools
 import warnings
 from argparse import ArgumentParser
@@ -18,13 +19,6 @@ from termcolor import cprint
 from model.logisticregression import LogisticRegressionProd, LogisticRegressionTrainer
 from preprocessing import DataPipeline
 from train import declareParserArguments
-
-# Helper links
-# https://www.kaggle.com/kadirduran/fraud-detection-with-deployment
-# https://www.kaggle.com/vincentlugat/lightgbm-plotly
-# https://www.kaggle.com/currie32/predicting-fraud-with-tensorflow/notebook
-# https://www.kaggle.com/enkidoctordu/eda-and-machine-learning-prediction-of-credit-card
-# https://www.kaggle.com/ohseokkim/creditcard-fraud-balance-is-key-feat-pycaret
 
 
 def target_distribution(df: pd.DataFrame, ops="Before_Smote"):
