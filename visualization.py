@@ -263,7 +263,7 @@ def plot_confussion_matrix(df: pd.DataFrame, actual_column, predict_column):
     ax.set_title("Confusion Matrix")
     # Save resulting plot
     plt.savefig(
-        f"./visualization_results/Prediction_Result_Plots/confussion_matrix.png",
+        f"./visualization_results/Prediction_Results/confussion_matrix.png",
         bbox_inches="tight",
     )
 
@@ -328,9 +328,17 @@ def visualize_test_results(df: pd.DataFrame, args=ArgumentParser) -> NoReturn:
         NoReturn: This method does not return anything.
     """
     # Make direction for result plot and dataframe
-    Path(f"./visualization_results/Prediction_Result_Plots/").mkdir(
+    Path(f"./visualization_results/Prediction_Results/").mkdir(
         parents=True, exist_ok=True
     )
+
+    # Save dataframe in Excel format
+    df.to_excel(
+        f"./visualization_results/Prediction_Results/predictions.xlsx",
+        engine="xlsxwriter",
+        index=False,
+    )
+
     plot_confussion_matrix(
         df=df,
         actual_column="Class",
@@ -361,10 +369,10 @@ if __name__ == "__main__":
     target_distribution(df=df_smote, ops="After_Smote")
 
     # Visualize unmodified dataset
-    visualize_before_data_ops(df=df_before_ops)
+    # visualize_before_data_ops(df=df_before_ops)
 
     # Visualize data undergoing predata changes
-    visualize_after_pre_data_ops(df=df_after_ops)
+    # visualize_after_pre_data_ops(df=df_after_ops)
 
     args.visualize_log_results = True
     # Create an LogisticRegressionProd object
