@@ -11,6 +11,10 @@ def Home():
     return render_template("index.html")
 
 
-@app.route("/predict", method=["POST"])
+@app.route("/", methods=["POST"])
 def predict():
     pass
+
+
+if __name__ == "__main__":
+    app.run(port=3000, debug=True)
