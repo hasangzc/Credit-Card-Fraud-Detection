@@ -12,4 +12,7 @@ It contains only numerical input variables which are the result of a PCA transfo
 * Python
 
 ### Some Visualizations Before Data Operation
+
+
+As seen from the boxplots, there are many outliers in the data;
 <img src="visualization_results/About_Data/boxplots.png" width=800 height=400>
