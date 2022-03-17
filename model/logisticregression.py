@@ -174,7 +174,8 @@ class LogisticRegressionProd:
             df_vis = df.copy()
             return (self._bst.predict(X=df.loc[:, df.columns != "Class"]), df_vis)
         # Otherwise, return the prediction only
-        return self._bst.predict()
+        # return self._bst.predict(self._bst.predict(X=df.loc[:, df.columns != "Class"]))
+        return (self._bst.predict(X=df.loc[:, df.columns != "Class"])).astype(float)
 
     def _load_model(self) -> LogisticRegression:
         """This method loads an LogisticRegression model from the given path.

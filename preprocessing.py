@@ -12,18 +12,18 @@ def DataPipeline(df: pd.DataFrame, args: ArgumentParser):
     if args.data_informations:
         data_informations(df=df)
         print("Data informations ops finished!")
-    # Seperate data
-    df_fraud = df[df["Class"] == 1]
-    df_normal = df[df["Class"] == 0]
-    for column in df.columns:
-        # The target variable is too unbalanced. For these reasons, the outlier operation was performed only for targets with a value of 0.
-        df_normal = remove_outliers_using_quantiles(
-            qu_dataset=df_normal, qu_field=column, qu_fence="outer"
-        )
-    print("Remove outliers ops finished!")
-    df = pd.concat([df_fraud, df_normal])
-    df.sort_values("Time")
-
+    if "Class" in df.columns:
+        # Seperate data
+        df_fraud = df[df["Class"] == 1]
+        df_normal = df[df["Class"] == 0]
+        for column in df.columns:
+            # The target variable is too unbalanced. For these reasons, the outlier operation was performed only for targets with a value of 0.
+            df_normal = remove_outliers_using_quantiles(
+                qu_dataset=df_normal, qu_field=column, qu_fence="outer"
+            )
+            print("Remove outliers ops finished!")
+        df = pd.concat([df_fraud, df_normal])
+        df.sort_values("Time")
     # Since most of data has already been scaled. Scale the columns that are left to scale (Amount and Time)
     df["Amount"] = StandardScaler().fit_transform(df["Amount"].values.reshape(-1, 1))
     df["Time"] = StandardScaler().fit_transform(df["Time"].values.reshape(-1, 1))

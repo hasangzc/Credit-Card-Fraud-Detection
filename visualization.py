@@ -1,5 +1,4 @@
 # Import the modules
-import itertools
 import warnings
 from argparse import ArgumentParser
 from pathlib import Path
@@ -399,7 +398,7 @@ if __name__ == "__main__":
     # Visualize data undergoing predata changes
     visualize_after_pre_data_ops(df=df_after_ops)
 
-    args.visualize_log_results = True
+    # args.visualize_log_results = True
     # Create an LogisticRegressionProd object
     log_reg_prod = LogisticRegressionProd(args=args)
     # Get predictions and dataframe

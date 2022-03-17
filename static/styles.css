@@ -2,5 +2,17 @@ h1 {
     background-color: #FDFCE5;
     text-align:center;
     color:  green;
-    margin-top: 100px;
+    margin-top: 130px;
+    font-size: 42px;
   }
+
+.bottom-cloud {
+  position: absolute;
+  right: 600px;
+  top: 250px;
+}
+
+.bottom-container  {
+  background-color: white;
+  margin: 550px 900px 0px;
+}
