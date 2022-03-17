@@ -10,3 +10,5 @@ It contains only numerical input variables which are the result of a PCA transfo
 
 ### Built with
 * Python
+
+### Some Visualizations Before Data Operation
