@@ -17,4 +17,5 @@ It contains only numerical input variables which are the result of a PCA transfo
 As seen from the boxplots, there are many outliers in the data;
 <img src="visualization_results/About_Data/boxplots.png" width=800 height=400>
 
-IQR calculated and outliers removed from data
+IQR calculated and outliers removed from data. Boxplots after IQR operations;
+<img src="visualization_results/About_Data/box_plots_after_ops.png" width=800 height=400>
