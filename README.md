@@ -29,3 +29,8 @@ It contains only numerical input variables which are the result of a PCA transfo
 * If we look at the correlation between the target and the features, we can see that the V17, V14, V12 and V11 features are highly correlated with the target value.
 
 <img src="visualization_results/About_Data/corr_between_target_and_features.png" width=800 height=400>
+
+
+* Dataset too unbalanced;
+
+<img src="visualization_results/About_Data/target_distribution.png" width=800 height=400>
