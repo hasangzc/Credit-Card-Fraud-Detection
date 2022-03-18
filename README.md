@@ -41,3 +41,5 @@ It contains only numerical input variables which are the result of a PCA transfo
 <img src="visualization_results/About_Data/target_distribution_after_smote.png" width=600 height=300>
 
 * More detailed plots can be viewed in the visualization_results folder.
+
+### Model and Train
