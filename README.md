@@ -19,3 +19,4 @@ As seen from the boxplots, there are many outliers in the data;
 
 IQR calculated and outliers removed from data. Boxplots after IQR operations;
 <img src="visualization_results/About_Data/box_plots_after_ops.png" width=800 height=400>
+s
