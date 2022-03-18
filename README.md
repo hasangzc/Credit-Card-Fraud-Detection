@@ -34,3 +34,10 @@ It contains only numerical input variables which are the result of a PCA transfo
 * Dataset too unbalanced;
 
 <img src="visualization_results/About_Data/target_distribution.png" width=600 height=300>
+
+
+* The Smote operation was applied before training the data. Target distribution after Smote;
+
+<img src="visualization_results/About_Data/target_distribution_after_smote.png" width=600 height=300>
+
+* More detailed plots can be viewed in the visualization_results folder.
