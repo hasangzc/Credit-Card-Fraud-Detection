@@ -70,4 +70,4 @@ Feature Importance;
 
 ### Production
 Api was created with Flask in app.py file. 
-In the test.py file, the data in xml format was parsed and the predictions were taken as a dataframe and api control was performed.
+In the test.py file, the data in xml format was parsed and the predictions were taken as a dataframe and api control was performed. 
