@@ -47,10 +47,14 @@ The LogisticRegressionTrainer class was created using the object-oriented progra
 
 
 ### Test Results
+
 Confussion Matrix;
+
 <img src="visualization_results/Prediction_Results/confussion_matrix.png" width=600 height=300>
 
+
 Feature Importance;
+
 <img src="visualization_results/Prediction_Results/feature_importance.png" width=600 height=300>
 
 
