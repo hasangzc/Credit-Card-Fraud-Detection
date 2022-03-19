@@ -46,3 +46,5 @@ It contains only numerical input variables which are the result of a PCA transfo
 The LogisticRegressionTrainer class was created using the object-oriented program in the logisticregression.py.py file. It can be tested and visualized and results  using the --is_testing --visualize_log_results and arguments. After the train process, the model is saved in the saved_model folder with the .pkl extension.``` python3 train.py --is_testing  --data "your_data" --visualize_log_results```
 
 ### Production
+Api was created with Flask in app.py file. 
+In the test.py file, the data in xml format was parsed and the predictions were taken as a dataframe and api control was performed.
