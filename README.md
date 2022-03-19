@@ -45,6 +45,16 @@ It contains only numerical input variables which are the result of a PCA transfo
 ### Model and Train
 The LogisticRegressionTrainer class was created using the object-oriented program in the logisticregression.py.py file. It can be tested and visualized and results  using the --is_testing --visualize_log_results and arguments. After the train process, the model is saved in the saved_model folder with the .pkl extension.``` python3 train.py --is_testing  --data "your_data" --visualize_log_results```
 
+--is_testing outputs; 
+confusion_matrix:
+      [[65970  1187]
+ 		  [ 2918 64238]], 
+
+accuracy_score:0.9694370611928853
+recall_score:0.9565489308475787,
+roc_auc_score:0.9694369652376584
+precision_score=0.9818570882690103, 
+f1_score:0.9690377957625904
 
 ### Test Results
 
